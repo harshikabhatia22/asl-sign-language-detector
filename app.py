@@ -6,7 +6,8 @@ import numpy as np
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
 import av
 
-with open('model.pkl', 'rb') as f:
+import gzip
+with gzip.open('model_compressed.pkl', 'rb') as f:
     model = pickle.load(f)
 
 mp_hands = mp.solutions.hands
