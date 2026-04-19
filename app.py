@@ -2,20 +2,21 @@ import streamlit as st
 import cv2
 import numpy as np
 import mediapipe as mp
+import gzip
 import pickle
 import os
 
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="ASL Detector", page_icon="🤟", layout="wide")
 
-# ---------- LOAD MODEL ----------
+# ---------- LOAD MODEL (FIXED) ----------
 model = None
 try:
-    if os.path.exists("model.pkl"):
-        with open("model.pkl", "rb") as f:
+    if os.path.exists("model_compressed.pkl"):
+        with gzip.open("model_compressed.pkl", "rb") as f:
             model = pickle.load(f)
     else:
-        st.error("❌ model.pkl file not found!")
+        st.error("❌ model_compressed.pkl not found!")
         st.stop()
 except Exception as e:
     st.error("❌ Model loading failed")
@@ -32,7 +33,7 @@ hands = mp_hands.Hands(
     min_detection_confidence=0.5
 )
 
-# ---------- CUSTOM UI ----------
+# ---------- UI ----------
 st.markdown("""
 <style>
 body {background-color:#0e0e0e;}
@@ -68,7 +69,7 @@ if "word" not in st.session_state:
 # ---------- LAYOUT ----------
 col1, col2 = st.columns([1,1])
 
-# ---------- LEFT SIDE ----------
+# ---------- LEFT ----------
 with col1:
     st.markdown("<div class='card'>", unsafe_allow_html=True)
 
@@ -112,7 +113,7 @@ with col1:
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------- RIGHT SIDE ----------
+# ---------- RIGHT ----------
 with col2:
     st.markdown("<div class='card'>", unsafe_allow_html=True)
 
