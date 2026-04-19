@@ -5,14 +5,14 @@ import gzip
 import numpy as np
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
 import av
-from mediapipe.solutions import hands as mp_hands_module
-from mediapipe.solutions import drawing_utils as mp_drawing
+from mediapipe.python.solutions import hands as mp_hands_module
+from mediapipe.python.solutions import drawing_utils as mp_drawing
 
 with gzip.open('model_compressed.pkl', 'rb') as f:
     model = pickle.load(f)
 
-from mediapipe.solutions import hands as mp_hands_module
-from mediapipe.solutions import drawing_utils as mp_drawing
+from mediapipe.python.solutions import hands as mp_hands_module
+from mediapipe.python.solutions import drawing_utils as mp_drawing
 
 hands = mp_hands_module.Hands(
     static_image_mode=False,
