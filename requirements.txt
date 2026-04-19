@@ -1,6 +1,6 @@
 streamlit
 streamlit-webrtc
-mediapipe.
+mediapipe
 opencv-python-headless
 scikit-learn
 numpy
