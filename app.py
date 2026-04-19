@@ -10,11 +10,15 @@ import gzip
 with gzip.open('model_compressed.pkl', 'rb') as f:
     model = pickle.load(f)
 
-mp_hands = mp.solutions.hands
-hands = mp_hands.Hands(
+from mediapipe.python.solutions import hands as mp_hands_module
+from mediapipe.python.solutions import drawing_utils as mp_drawing
+
+hands = mp_hands_module.Hands(
     static_image_mode=False,
     max_num_hands=1,
     min_detection_confidence=0.5
+)
+HAND_CONNECTIONS = HAND_CONNECTIONS
 )
 mp_drawing = mp.solutions.drawing_utils
 
@@ -215,7 +219,7 @@ with col1:
                 for hand_landmarks in results.multi_hand_landmarks:
                     mp_drawing.draw_landmarks(
                         img, hand_landmarks,
-                        mp_hands.HAND_CONNECTIONS,
+                        HAND_CONNECTIONS,
                         mp_drawing.DrawingSpec(color=(255, 182, 193), thickness=2, circle_radius=4),
                         mp_drawing.DrawingSpec(color=(255, 143, 171), thickness=2)
                     )
