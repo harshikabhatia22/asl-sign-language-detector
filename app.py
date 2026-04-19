@@ -5,7 +5,18 @@ import mediapipe as mp
 import gzip
 import pickle
 import os
+import gzip
+import pickle
 
+model = None
+
+try:
+    with gzip.open("model_compressed.pkl", "rb") as f:
+        model = pickle.load(f)
+except Exception as e:
+    st.error("❌ Model loading failed")
+    st.write(e)
+    st.stop()
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="ASL Detector", page_icon="🤟", layout="wide")
 
