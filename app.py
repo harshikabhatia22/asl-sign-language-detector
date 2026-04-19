@@ -2,26 +2,23 @@ import streamlit as st
 import cv2
 import numpy as np
 import mediapipe as mp
-import joblib
+import pickle
 import os
 
-# ---------- PAGE ----------
+# ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="ASL Detector", page_icon="🤟", layout="wide")
 
 # ---------- LOAD MODEL ----------
 model = None
 try:
-    if os.path.exists("model.joblib"):
-        model = joblib.load("model.joblib")
-    elif os.path.exists("model.pkl"):
-        import pickle
+    if os.path.exists("model.pkl"):
         with open("model.pkl", "rb") as f:
             model = pickle.load(f)
     else:
-        st.error("❌ Model file not found!")
+        st.error("❌ model.pkl file not found!")
         st.stop()
 except Exception as e:
-    st.error("❌ Model loading failed (version mismatch).")
+    st.error("❌ Model loading failed")
     st.write(e)
     st.stop()
 
@@ -35,34 +32,49 @@ hands = mp_hands.Hands(
     min_detection_confidence=0.5
 )
 
-# ---------- UI ----------
+# ---------- CUSTOM UI ----------
 st.markdown("""
 <style>
-body {background:#0e0e0e;}
+body {background-color:#0e0e0e;}
 .title {text-align:center;font-size:48px;color:#ffb6c1;font-weight:700;}
 .sub {text-align:center;color:#aaa;margin-bottom:25px;}
-.card {background:#161616;padding:20px;border-radius:20px;border:1px solid #ffb6c1;}
-.big {font-size:90px;text-align:center;color:#ffb6c1;font-weight:700;}
-.small {text-align:center;color:#aaa;}
-button {border-radius:10px !important;}
+.card {
+    background:#161616;
+    padding:20px;
+    border-radius:20px;
+    border:1px solid #ffb6c1;
+    box-shadow:0 0 15px rgba(255,182,193,0.1);
+}
+.big {
+    font-size:90px;
+    text-align:center;
+    color:#ffb6c1;
+    font-weight:700;
+}
+.small {
+    text-align:center;
+    color:#aaa;
+}
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<div class='title'>🤟 ASL Sign Language Detector</div>", unsafe_allow_html=True)
 st.markdown("<div class='sub'>Upload hand sign → AI predicts the letter</div>", unsafe_allow_html=True)
 
+# ---------- SESSION ----------
 if "word" not in st.session_state:
     st.session_state.word = ""
 
+# ---------- LAYOUT ----------
 col1, col2 = st.columns([1,1])
 
-# ---------- LEFT ----------
+# ---------- LEFT SIDE ----------
 with col1:
     st.markdown("<div class='card'>", unsafe_allow_html=True)
 
-    file = st.file_uploader("📤 Upload Image", type=["jpg","png","jpeg"])
+    file = st.file_uploader("📤 Upload Hand Image", type=["jpg","png","jpeg"])
 
-    if file and model:
+    if file:
         img = cv2.imdecode(np.frombuffer(file.read(), np.uint8), 1)
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -78,7 +90,7 @@ with col1:
 
             pred = model.predict([landmarks])[0]
             prob = model.predict_proba([landmarks])[0]
-            conf = int(max(prob)*100)
+            conf = int(max(prob) * 100)
 
             st.image(img, channels="BGR")
 
@@ -88,7 +100,7 @@ with col1:
 
             c1, c2 = st.columns(2)
             with c1:
-                if st.button("➕ Add"):
+                if st.button("➕ Add Letter"):
                     st.session_state.word += pred
                     st.rerun()
             with c2:
@@ -96,19 +108,22 @@ with col1:
                     st.session_state.word = ""
                     st.rerun()
         else:
-            st.warning("No hand detected ❌")
+            st.warning("❌ No hand detected")
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------- RIGHT ----------
+# ---------- RIGHT SIDE ----------
 with col2:
     st.markdown("<div class='card'>", unsafe_allow_html=True)
 
     st.subheader("📝 Word Builder")
-    st.markdown(f"<div class='big' style='font-size:45px'>{st.session_state.word or '...'}</div>", unsafe_allow_html=True)
+    st.markdown(
+        f"<div class='big' style='font-size:45px'>{st.session_state.word or '...'}</div>",
+        unsafe_allow_html=True
+    )
 
     st.markdown("</div>", unsafe_allow_html=True)
 
 # ---------- FOOTER ----------
 st.markdown("---")
-st.markdown("<center style='color:#555'>MediaPipe + ML | Final Project</center>", unsafe_allow_html=True)
+st.markdown("<center style='color:#555'>Built with ❤️ using MediaPipe + ML</center>", unsafe_allow_html=True)
