@@ -1,6 +1,5 @@
-streamlit==1.32.0
-opencv-python-headless==4.7.0.72
-mediapipe==0.9.3.0
-numpy==1.21.6
-scikit-learn==1.0.2
+streamlit
+opencv-python-headless
+mediapipe
+numpy
 protobuf==3.20.3
