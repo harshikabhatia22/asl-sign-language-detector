@@ -19,8 +19,7 @@ hands = mp_hands_module.Hands(
     max_num_hands=1,
     min_detection_confidence=0.5
 )
-HAND_CONNECTIONS = HAND_CONNECTIONS
-
+HAND_CONNECTIONS = mp_hands_module.HAND_CONNECTIONS
 st.set_page_config(page_title="ASL Sign Language Detector", page_icon="🤟", layout="wide")
 
 st.markdown("""
