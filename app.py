@@ -108,13 +108,21 @@ with col1:
 
             return av.VideoFrame.from_ndarray(img, format="bgr24")
 
-    ctx = webrtc_streamer(
-        key="asl",
-        video_processor_factory=VideoProcessor,
-        media_stream_constraints={"video": True, "audio": False},
-        rtc_configuration={"iceServers": [{"urls": ["stun:stun.l.google.com:19302"]}]}
-    )
-
+   ctx = webrtc_streamer(
+    key="asl",
+    video_processor_factory=VideoProcessor,
+    media_stream_constraints={"video": True, "audio": False},
+    rtc_configuration={
+        "iceServers": [
+            {"urls": ["stun:stun.l.google.com:19302"]},
+            {
+                "urls": ["turn:openrelay.metered.ca:80"],
+                "username": "openrelayproject",
+                "credential": "openrelayproject"
+            }
+        ]
+    }
+)
     if ctx.video_processor:
         letter = ctx.video_processor.letter
         confidence = ctx.video_processor.confidence
